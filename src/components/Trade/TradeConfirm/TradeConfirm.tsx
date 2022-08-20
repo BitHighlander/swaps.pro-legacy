@@ -23,6 +23,7 @@ export const TradeConfirm = () => {
       //TODO show *Look down at keepkey icon!
 
       //submit transaction
+      // @ts-ignore
       let swapBuilt = await state.pioneer.sign(state.invocation.invocationId)
       console.log("swapBuilt: ", swapBuilt)
       //get txid
@@ -32,6 +33,7 @@ export const TradeConfirm = () => {
         invocationId: state.invocation.invocationId
       }
       //executeSwap
+      // @ts-ignore
       let executionResp = await state.pioneer.broadcast(payload)
       console.log("executionResp: ", executionResp)
 

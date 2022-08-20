@@ -163,7 +163,7 @@ export const SendAssetModal = ({ balance }: SendAssetModalProps) => {
                             Accept tx on keepkey to continue
                         </Alert>}
                         <Input disabled={sendClicked} onChange={(valueString) => setSendAddress(valueString.target.value)} placeholder="Recipient Address" />
-                        {balance.needsMemo && <Input disabled={sendClicked} onChange={(valueString) => setSendMemo(valueString.target.value)} placeholder="Memo" />}
+                        {balance?.needsMemo && <Input disabled={sendClicked} onChange={(valueString) => setSendMemo(valueString.target.value)} placeholder="Memo" />}
                         <NumberInput
                             width="100%"
                             isDisabled={sendClicked}

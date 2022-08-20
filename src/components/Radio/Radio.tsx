@@ -52,6 +52,7 @@ export const Radio = <T extends RadioTypes>({
     name: name ?? 'radio',
     // @ts-ignore
     defaultValue: defaultValue ?? options[0]?.value,
+    // @ts-ignore
     onChange
   })
 
@@ -62,7 +63,9 @@ export const Radio = <T extends RadioTypes>({
       {options.map(option => {
         return (
           <RadioCard
+            // @ts-ignore
             {...getRadioProps({ value: option.value })}
+            // @ts-ignore
             key={option.value}
             label={option.label}
           />

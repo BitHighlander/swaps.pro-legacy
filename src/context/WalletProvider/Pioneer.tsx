@@ -270,7 +270,7 @@ export class PioneerService {
         queryKey: this.queryKey,
         wss: process.env.REACT_APP_URL_PIONEER_SOCKET,
         spec: process.env.REACT_APP_URL_PIONEER_SPEC,
-        rangoApiKey: process.env.REACT_APP_RANGO_API_KEY || '02b14225-f62e-4e4f-863e-a8145e5befe5',
+        rangoApiKey: '02b14225-f62e-4e4f-863e-a8145e5befe5',
         paths:[] //TODO allow import custom paths
       }
       console.log("config: ",config)

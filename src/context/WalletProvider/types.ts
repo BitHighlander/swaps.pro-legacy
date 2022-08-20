@@ -1,4 +1,5 @@
 export interface Balance {
+    needsMemo?: boolean;
     blockchain: string;
     symbol: string;
     asset: string;
