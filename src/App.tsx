@@ -5,7 +5,7 @@ import { Routes } from 'Routes/Routes'
 
 export const App = () => {
   const { state } = useWallet()
-  const { keepkeyPin } = useModal()
+  const { keepkeyPin, webUsbUnsupported } = useModal()
 
   useEffect(() => {
     if (!state.modal || !state.keepKeyPinRequestType) {
@@ -14,6 +14,9 @@ export const App = () => {
       return
     }
     keepkeyPin.open({})
-  }, [state.modal, state.keepKeyPinRequestType])
+  }, [state.modal, state.keepKeyPinRequestType, keepkeyPin])
+  useEffect(() => {
+    if (!navigator.usb) webUsbUnsupported.open({})
+  }, [webUsbUnsupported])
   return <Routes />
 }

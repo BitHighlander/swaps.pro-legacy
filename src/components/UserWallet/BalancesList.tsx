@@ -1,11 +1,10 @@
 import { Button, HStack, Image, Table, TableCaption, TableContainer, Tbody, Td, Text, Tfoot, Th, Thead, Tr, VStack } from "@chakra-ui/react"
-import { useWallet } from "context/WalletProvider/WalletProvider"
+import { Balance } from "context/WalletProvider/types"
 import { useModal } from "hooks/useModal/useModal"
 import { FC } from "react"
 import { FiDownload, FiUpload } from "react-icons/fi"
 
-export const BalancesList: FC = () => {
-    const { state } = useWallet()
+export const BalancesList: FC<{ balances: Balance[] }> = ({ balances }) => {
     const { sendAsset, receiveAsset } = useModal()
 
     return (
@@ -21,7 +20,7 @@ export const BalancesList: FC = () => {
                     </Tr>
                 </Thead>
                 <Tbody overflow="scroll">
-                    {state.balances && state.balances.sort((a, b) => Number(b.valueUsd) - Number(a.valueUsd)).map((bal) => <Tr>
+                    {balances && balances.sort((a, b) => Number(b.valueUsd) - Number(a.valueUsd)).map((bal) => <Tr>
                         <Td>
                             <HStack>
                                 <Image src={bal.image} maxW="35px" />

@@ -252,6 +252,31 @@ export const TradeInput = ({ history }: RouterProps) => {
     }
   }, [dispatch, inputAmount, enteringAmount, state.tradeState])
 
+  useEffect(() => {
+    if (!state.balances) return
+    if (!state.tradeState || !state.tradeState.input) {
+      const ethBal = state.balances.find((b) => b.symbol === "ETH")
+      if (!ethBal) return
+      dispatch({
+        type: WalletActions.SET_TRADE_STATE, payload:
+          state.tradeState ? {
+            ...state.tradeState,
+            input: { ...state.tradeState.input, bal: ethBal, amount: 0 }
+          } : { input: { bal: ethBal } }
+      })
+    } else if (!state.tradeState.output) {
+      const btcBal = state.balances.find((b) => b.symbol === "BTC")
+      if (!btcBal) return
+      dispatch({
+        type: WalletActions.SET_TRADE_STATE, payload:
+          state.tradeState ? {
+            ...state.tradeState,
+            output: { ...state.tradeState.output, bal: btcBal, amount: 0 }
+          } : { output: { bal: btcBal } }
+      })
+    }
+  }, [state.tradeState, state.balances, dispatch])
+
   return (
     <SlideTransition>
       {/*<div>*/}
@@ -395,7 +420,7 @@ export const TradeInput = ({ history }: RouterProps) => {
         </Button>
       </Box>
 
-      <VStack display={loading ? 'flex': 'none'} alignItems='center' justifyContent='center' w="100%">
+      <VStack display={loading ? 'flex' : 'none'} alignItems='center' justifyContent='center' w="100%">
         <Text fontWeight='bold' fontSize='xl'>Generating a Quote</Text>
         <Image borderRadius='5%' src={CalculatingGif} />
         <Button onClick={cancelQuote} colorScheme='red'>Cancel</Button>

@@ -22,7 +22,7 @@ import { Card } from 'components/Card'
 import { Row } from 'components/Row'
 import { useHistory, useParams } from 'react-router-dom'
 import { useWallet, WalletActions } from "../../../context/WalletProvider/WalletProvider";
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Page } from 'components/Layout/Page'
 import { StackedProgressBar } from './StackedProgressBar'
 import CalculatingGif from 'assets/gif/calculating.gif'
@@ -36,7 +36,7 @@ export const TradeStatus = () => {
     const { invocationId } = useParams<{ invocationId: string }>()
 
     const [tabIndex, setTabIndex] = React.useState(0)
-    const { state, updateInvocation, dispatch } = useWallet()
+    const { state, dispatch } = useWallet()
     const [step, setStep] = useState(0)
     const [imageSrc, setImageSrc] = useState(CalculatingGif)
 
@@ -85,25 +85,8 @@ export const TradeStatus = () => {
         else if (step <= 4) setImageSrc(CompletedGif)
     }, [step])
 
-    if (!state.invocation || !state.invocationId) return (
-        <>
-            Fetching Invocation
-            <Spinner
-                thickness="4px"
-                speed="0.65s"
-                emptyColor="gray.200"
-                color="blue.500"
-                size="xl"
-            /></>
-    )
-
-    const { invocationContext, fullfillmentTxid, invocationTxid, tradeStatus } = state
-    console.log("invocation: ", state.invocation)
-
-
-    const onUpdate = async function () {
+    const onUpdate = useCallback(() => {
         //Open Select modal.
-        updateInvocation()
 
         if (!state.invocation) return
         // signedTx/broadcasted/complete/fullfilled
@@ -141,7 +124,31 @@ export const TradeStatus = () => {
 
 
 
-    }
+    }, [state.invocation])
+
+
+    useEffect(() => {
+        setInterval(() => {
+            onUpdate()
+        }, 5000)
+    }, [])
+
+    if (!state.invocation || !state.invocationId) return (
+        <>
+            Fetching Invocation
+            <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="blue.500"
+                size="xl"
+            /></>
+    )
+
+    const { invocationContext, fullfillmentTxid, invocationTxid, tradeStatus } = state
+    console.log("invocation: ", state.invocation)
+
+
 
     return (
         <Box d='flex' width='full' justifyContent='center' alignItems='center'>

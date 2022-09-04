@@ -692,21 +692,40 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
             localStorage.setItem('deviceId', deviceId)
             let pioneerResp = await state.pioneer.pairWallet(wallet)
             console.log("pioneerResp: ", pioneerResp)
-            //@TODO get this from pioneer?
-            let walletInfo = {
-              name: 'keepkey',
-              icon: KEEPKEY_ICON,
-              blockchains: 32,
-              walletId: "keepkey-01",
-              isConnected: true
+
+            if (pioneerResp) {
+              //@TODO get this from pioneer?
+              let walletInfo = {
+                name: 'keepkey',
+                icon: KEEPKEY_ICON,
+                blockchains: 32,
+                walletId: "keepkey-01",
+                isConnected: true
+              }
+
+              //@TODO support multiple wallet paired!
+              dispatch({ type: WalletActions.SET_INPUT_WALLET, payload: walletInfo })
+              dispatch({ type: WalletActions.SET_OUTPUT_WALLET, payload: walletInfo })
+
+              dispatch({ type: WalletActions.SET_KEEPKEY_CONNECTED, payload: true })
+              dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
+              //sit init
+              dispatch({ type: WalletActions.SET_INITIALIZED, payload: true })
+              //set context
+              dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload: 'ETH' })
+
+              console.log("pioneer: ", state.pioneer)
+              console.log("username: ", state.pioneer.username)
+
+              console.log('balances', JSON.stringify(state.pioneer.balances))
+              if (state.pioneer.balances) dispatch({ type: WalletActions.SET_BALANCES, payload: state.pioneer.balances })
+              if (state.pioneer.context) dispatch({ type: WalletActions.SET_CONTEXT, payload: state.pioneer.context })
+              //invocationContext
+              if (state.pioneer.context) dispatch({ type: WalletActions.SET_INVOCATION_CONTEXT, payload: state.pioneer.context })
+              if (state.pioneer.username) dispatch({ type: WalletActions.SET_USERNAME, payload: state.pioneer.username })
+              dispatch({ type: WalletActions.SET_WALLET_INFO, payload: { name: 'pioneer', icon: 'Pioneer' } })
             }
 
-            //@TODO support multiple wallet paired!
-            dispatch({ type: WalletActions.SET_INPUT_WALLET, payload: walletInfo })
-            dispatch({ type: WalletActions.SET_OUTPUT_WALLET, payload: walletInfo })
-
-            dispatch({ type: WalletActions.SET_KEEPKEY_CONNECTED, payload: true })
-            dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
           }
         } catch (e) {
           alert(e)
@@ -818,10 +837,15 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
 
   useEffect(() => {
 
-    const keepkeyAdapter = keepkeyWebUSB.WebUSBKeepKeyAdapter.useKeyring(state.keyring);
-    keepkeyAdapter.initialize().then(() => {
-      dispatch({ type: WalletActions.SET_KEEPKEY_ADAPTER, payload: keepkeyAdapter })
-    })
+    try {
+      const keepkeyAdapter = keepkeyWebUSB.WebUSBKeepKeyAdapter.useKeyring(state.keyring);
+      keepkeyAdapter.initialize().then(() => {
+        dispatch({ type: WalletActions.SET_KEEPKEY_ADAPTER, payload: keepkeyAdapter })
+      })
+    } catch (e) {
+      console.log('HAHA', e)
+    }
+
 
     //Start Onboard.js
     let networkId = 1

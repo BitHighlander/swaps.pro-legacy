@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback, FC } from "react";
 import { PieChart, Pie, Sector } from 'recharts';
-import { useWallet } from "context/WalletProvider/WalletProvider";
 import { HStack, Stack, Text, VStack } from "@chakra-ui/react";
 
 const renderActiveShape = (props: any) => {
@@ -76,8 +75,7 @@ const renderActiveShape = (props: any) => {
     );
 };
 
-export const BalancesChart: FC = () => {
-    const { state } = useWallet()
+export const BalancesChart: FC<{ balances: Balance[] }> = ({ balances }) => {
 
     const [activeIndex, setActiveIndex] = useState(0);
     const [portfolioValue, setPortfolioValue] = useState(0)
@@ -86,14 +84,14 @@ export const BalancesChart: FC = () => {
     ])
 
     useEffect(() => {
-        if (!state.balances) return
-        setBals(state.balances.map((bal) => {
+        if (!balances) return
+        setBals(balances.map((bal) => {
             return { name: bal.symbol ?? "", value: Number(bal.valueUsd) }
         }))
         let val = 0;
-        state.balances.map((bal) => val += Number(bal.valueUsd))
+        balances.map((bal) => val += Number(bal.valueUsd))
         setPortfolioValue(val)
-    }, [state.balances])
+    }, [balances])
 
     const onPieEnter = useCallback(
         (_, index) => {
@@ -102,7 +100,7 @@ export const BalancesChart: FC = () => {
         [setActiveIndex]
     );
 
-    if (!state.balances) return <p>Loading...</p>
+    if (!balances) return <p>Loading...</p>
 
     return (
         <HStack justifyContent='center' alignItems='center'>

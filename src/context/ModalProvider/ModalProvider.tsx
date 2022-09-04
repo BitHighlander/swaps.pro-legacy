@@ -1,5 +1,6 @@
 import { ReceiveAssetModal } from 'components/Modals/Asset/ReceiveAsset'
 import { SendAssetModal } from 'components/Modals/Asset/SendAsset'
+import { WebUSBUnsupported } from 'components/Modals/Error/WebUSBUnsupported'
 import { KeepKeyPin } from 'components/Modals/KeepKey/Pin'
 import { SelectAssetModal } from 'components/Modals/Trade/SelectAsset'
 import merge from 'lodash/merge'
@@ -15,7 +16,8 @@ const MODALS = {
   selectAsset: SelectAssetModal,
   sendAsset: SendAssetModal,
   receiveAsset: ReceiveAssetModal,
-  keepkeyPin: KeepKeyPin
+  keepkeyPin: KeepKeyPin,
+  webUsbUnsupported: WebUSBUnsupported
 }
 
 // state
