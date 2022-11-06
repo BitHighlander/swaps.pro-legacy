@@ -27,9 +27,9 @@ export const KeepKeyButton: FC<FlexProps> = props => {
         >
             {state.keepkeyConnected ? (
                 <HStack>
-                    <Image maxH={10} maxW={20} src={KEEPKEY_ICON} />
+                    <Image paddingLeft='10px' maxH={12} maxW={12} src={KEEPKEY_ICON} />
                     <Text fontSize='sm'>{context && shortenAddress(context, 4)}</Text>
-                    <ChevronDownIcon h={8} w={8} />
+                    {/*<ChevronDownIcon h={8} w={8} />*/}
                 </HStack>
             ) : (
                 <div onClick={connectKeepkey}>

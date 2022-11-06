@@ -30,8 +30,8 @@
     "@keplr-wallet/unit": "^0.9.0-alpha.14",
     "@pioneer-platform/pioneer-coins": "^8.1.37",
     "@pioneer-platform/pioneer-types": "^8.1.32",
-    "@pioneer-sdk/sdk": "^1.0.15",
-    "@pioneer-sdk/tx-builder": "^1.0.1",
+    "@pioneer-sdk/sdk": "latest",
+    "@pioneer-sdk/tx-builder": "latest",
     "@reduxjs/toolkit": "^1.6.1",
     "@shapeshiftoss/hdwallet-core": "^1.29.0",
     "@shapeshiftoss/hdwallet-keepkey-webusb": "^1.22.0",
@@ -67,6 +67,7 @@
     "recharts": "^2.1.13",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0",
+    "sass": "^1.54.4",
     "web-vitals": "^2.1.0"
   },
   "eslintConfig": {

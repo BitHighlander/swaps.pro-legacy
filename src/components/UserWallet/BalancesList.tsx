@@ -9,8 +9,8 @@ export const BalancesList: FC = () => {
     const { sendAsset, receiveAsset } = useModal()
 
     return (
-        <TableContainer width="full" px="20px" pb="20px" >
-            <Table variant='simple' borderRadius="50px" >
+        <TableContainer >
+            <Table variant='simple' >
                 <Thead bgColor="gray.600">
                     <Tr>
                         <Th>Coin</Th>

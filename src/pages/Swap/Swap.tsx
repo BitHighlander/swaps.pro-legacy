@@ -31,7 +31,7 @@ export const Swap = () => {
 
   if (!username)
     return (
-        <Box d='flex' width='full' justifyContent='center' alignItems='center'>
+        <Box d='flex' width='full' justifyContent='center' alignItems='center' >
           <div>
               <Page>
                   <Flex maxWidth={{ base: 'auto', '2xl': '1464px' }} mx='auto' px={16}>

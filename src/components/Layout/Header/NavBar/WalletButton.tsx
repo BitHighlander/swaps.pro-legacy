@@ -82,8 +82,8 @@ export const WalletButton: FC<FlexProps> = () => {
         {username.substring(0, 28)}...
       </MenuButton>
       <MenuList minW='300px'>
-        <MenuGroup title='Wallet Overview'>
-          context: {context?.substring(0, 28)}
+        <MenuGroup title='Wallets'>
+          {/*context: {context?.substring(0, 28)}*/}
           <Accordion>
 
             <AccordionItem>
@@ -98,26 +98,26 @@ export const WalletButton: FC<FlexProps> = () => {
               <AccordionPanel pb={4}>
                   {!keepkey ? (
                       <div>
-                      <MenuItem
-                          icon={
-                              <Circle bg='whiteAlpha.200' size={8}>
-                                  <ArrowUpIcon />
-                              </Circle>
-                          }
-                          onClick={ () => openSend('keepkey')}
-                      >
-                          Send
-                      </MenuItem>
-                      <MenuItem
-                          icon={
-                              <Circle bg='whiteAlpha.200' size={8}>
-                                  <ArrowDownIcon />
-                              </Circle>
-                          }
-                          onClick={ () => openReceive('keepkey')}
-                      >
-                          Receive
-                      </MenuItem>
+                      {/*<MenuItem*/}
+                      {/*    icon={*/}
+                      {/*        <Circle bg='whiteAlpha.200' size={8}>*/}
+                      {/*            <ArrowUpIcon />*/}
+                      {/*        </Circle>*/}
+                      {/*    }*/}
+                      {/*    onClick={ () => openSend('keepkey')}*/}
+                      {/*>*/}
+                      {/*    Send*/}
+                      {/*</MenuItem>*/}
+                      {/*<MenuItem*/}
+                      {/*    icon={*/}
+                      {/*        <Circle bg='whiteAlpha.200' size={8}>*/}
+                      {/*            <ArrowDownIcon />*/}
+                      {/*        </Circle>*/}
+                      {/*    }*/}
+                      {/*    onClick={ () => openReceive('keepkey')}*/}
+                      {/*>*/}
+                      {/*    Receive*/}
+                      {/*</MenuItem>*/}
                       <MenuItem
                           icon={
                               <Circle bg='whiteAlpha.200' size={8}>

@@ -107,8 +107,8 @@ export const BalancesChart: FC = () => {
     return (
         <HStack justifyContent='center' alignItems='center'>
             <VStack>
-                <Text fontSize="3xl" fontWeight="bold">Estimated Balance</Text>
-                <Text fontSize="3xl">≈ ${portfolioValue}</Text>
+                <Text fontSize="xl" fontWeight="bold">Estimated Balance</Text>
+                <Text fontSize="xl">≈ ${portfolioValue}</Text>
             </VStack>
             <PieChart width={400} height={400}>
                 <Pie

@@ -51,6 +51,7 @@ only_master: &only_master
     branches:
       only:
         - master
+        - release-canidate
 
 only_develop: &only_develop
   filters:

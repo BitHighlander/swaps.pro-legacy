@@ -13,7 +13,7 @@ export const Wallet = () => {
             <Box d='flex' width='full' justifyContent='center' alignItems='center'>
                 <div>
                     <Page>
-                        <Flex maxWidth={{ base: 'auto', '2xl': '1464px' }} mx='auto' px={16}>
+                        <Flex maxWidth={{ base: 'auto' }} mx='auto' px={16}>
                             <Stack flex={1} spacing={4} justifyContent='center' alignItems='center'>
                                 <Card maxW="460px" mx="auto" flex={1} justifyContent='center' alignItems='center'>
                                     <Tabs isFitted variant='soft-rounded' defaultIndex={0}>

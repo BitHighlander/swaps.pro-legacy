@@ -29,6 +29,10 @@ type TokenRowProps = {
   rules?: ControllerProps['rules']
   inputLeftElement?: React.ReactNode
   inputRightElement?: React.ReactNode
+  setValue: React.Dispatch<React.SetStateAction<number>>
+  setEnteringAmount?: React.Dispatch<React.SetStateAction<boolean>>
+  value: number
+  loading: boolean
 } & InputGroupProps
 
 export const TokenRow = ({
@@ -37,16 +41,20 @@ export const TokenRow = ({
   rules,
   inputLeftElement,
   inputRightElement,
+  setValue,
+  setEnteringAmount,
+  value,
+  loading,
   ...rest
 }: TokenRowProps) => {
   const {
     number: { localeParts }
   } = useLocaleFormatter({ fiatType: 'USD' })
   const { updateAmountInNative } = Pioneer()
-  const onTextChangeNative = (value:any) => {
+  const onTextChangeNative = (value: any) => {
 
     //Open Select modal.
-    console.log("onTextChangeNative called! (asset input) value: ",value)
+    console.log("onTextChangeNative called! (asset input) value: ", value)
     updateAmountInNative(value.value)
     //update Amount In native
 
@@ -61,14 +69,18 @@ export const TokenRow = ({
         </InputLeftElement>
       )}
       <Controller
-        render={({ field: { onChange, value } }) => (
+        render={() => (
           <NumberFormat
+            disabled={loading}
             inputMode='decimal'
             thousandSeparator={localeParts.group}
             decimalSeparator={localeParts.decimal}
+            onFocus={() => setEnteringAmount && setEnteringAmount(true)}
+            onBlur={() => setEnteringAmount && setEnteringAmount(false)}
             value={value}
             customInput={CryptoInput}
             onValueChange={onTextChangeNative}
+            onChange={(e) => { setValue(Number(e.target.value)) }}
           />
         )}
         name={fieldName}

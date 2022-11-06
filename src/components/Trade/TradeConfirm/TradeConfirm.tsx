@@ -5,46 +5,47 @@ import { HelperToolTip } from 'components/HelperTooltip'
 import { Row } from 'components/Row'
 import { SlideTransition } from 'components/SlideTransition'
 import { useFormContext } from 'react-hook-form'
-import { RouterProps } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import { AssetToAsset } from './AssetToAsset'
 import { useWallet, WalletActions } from "context/WalletProvider/WalletProvider";
+import { useState } from 'react'
 
 
-export const TradeConfirm = ({ history }: RouterProps) => {
-  const { getValues } = useFormContext()
-  const { sellAsset, buyAsset } = getValues()
+export const TradeConfirm = () => {
   const { buildTransaction, state, dispatch } = useWallet()
-  console.log("state.invocation: ",state.invocation)
-  let onSubmit = async function(){
-    try{
-      console.log("onSubmit")
-      const currentSellAsset = getValues('sellAsset')
-      const currentBuyAsset = getValues('buyAsset')
-      console.log("currentSellAsset: ",currentSellAsset)
-      console.log("onSubmit: ",currentBuyAsset)
+  const history = useHistory()
 
+  console.log("state.invocation: ", state.invocation)
+  let onSubmit = async function () {
+    if (!state.invocation) return
+    try {
+      console.log("onSubmit")
       //TODO show *Look down at keepkey icon!
 
       //submit transaction
+      // @ts-ignore
       let swapBuilt = await state.pioneer.sign(state.invocation.invocationId)
-      console.log("swapBuilt: ",swapBuilt)
+      console.log("swapBuilt: ", swapBuilt)
       //get txid
       let payload = {
-        noBroadcast:false,
-        sync:false,
-        invocationId:state.invocation.invocationId
+        noBroadcast: false,
+        sync: false,
+        invocationId: state.invocation.invocationId
       }
       //executeSwap
+      // @ts-ignore
       let executionResp = await state.pioneer.broadcast(payload)
-      console.log("executionResp: ",executionResp)
+      console.log("executionResp: ", executionResp)
 
-      //TODO update txid
-
-      history.push('/trade/status')
-    }catch(e){
+      //open invocation!
+      history.push(`/trade/status`)
+    } catch (e) {
       console.error(e)
     }
   }
+
+  if (!state.invocation) return <div>Loading...</div>
+
 
   return (
     <SlideTransition>
@@ -70,14 +71,14 @@ export const TradeConfirm = ({ history }: RouterProps) => {
           </SimpleGrid>
           <AssetToAsset
             buyAsset={{
-              symbol: buyAsset?.currency?.symbol,
-              amount: buyAsset.amount,
-              icon: buyAsset?.currency?.image
+              symbol: state.tradeState?.output?.bal?.symbol ?? "",
+              amount: state.tradeState?.output?.amount ?? 0,
+              icon: state.tradeState?.output?.bal?.image ?? ""
             }}
             sellAsset={{
-              symbol: sellAsset?.currency?.symbol,
-              amount: sellAsset.amount,
-              icon: sellAsset?.currency?.image
+              symbol: state.tradeState?.input?.bal?.symbol ?? "",
+              amount: state.tradeState?.input?.amount ?? 0,
+              icon: state.tradeState?.input?.bal?.image ?? ""
             }}
             mt={6}
           />
@@ -96,30 +97,30 @@ export const TradeConfirm = ({ history }: RouterProps) => {
             </Row>
             <Row>
               <HelperToolTip label='Hops are how many transactions are needed to complete the swap'>
-              <Row.Label>hops: {state.invocation.invocation.tx.swaps.length}</Row.Label>
+                <Row.Label>hops: {state.invocation.invocation.tx.swaps.length}</Row.Label>
               </HelperToolTip>
             </Row>
             <Row>
-            {state.invocation.invocation.tx.swaps.map((value:any, i:any) => {
-              return <>
-                <HelperToolTip label='protocol used to complete the swap'>
-                  <Row.Label>swapperId:</Row.Label>
-                  <Box textAlign='right'>
-                    <Text></Text>
-                    <Text color='gray.500'>{value.swapperId}</Text>
-                  </Box>
-                </HelperToolTip>
-                {/*<HelperToolTip label='protocol used to complete the swap'>*/}
-                {/*  <Row.Label>time avg:{value.timeStat.avg}</Row.Label>*/}
-                {/*</HelperToolTip>*/}
-                {/*<HelperToolTip label='protocol used to complete the swap'>*/}
-                {/*  <Row.Label>time min:{value.timeStat.min}</Row.Label>*/}
-                {/*</HelperToolTip>*/}
-                {/*<HelperToolTip label='protocol used to complete the swap'>*/}
-                {/*  <Row.Label>time min:{value.timeStat.max}</Row.Label>*/}
-                {/*</HelperToolTip>*/}
-              </>
-            })}
+              {state.invocation.invocation.tx.swaps.map((value: any, i: any) => {
+                return <>
+                  <HelperToolTip label='protocol used to complete the swap'>
+                    <Row.Label>swapperId:</Row.Label>
+                    <Box textAlign='right'>
+                      <Text></Text>
+                      <Text color='gray.500'>{value.swapperId}</Text>
+                    </Box>
+                  </HelperToolTip>
+                  {/*<HelperToolTip label='protocol used to complete the swap'>*/}
+                  {/*  <Row.Label>time avg:{value.timeStat.avg}</Row.Label>*/}
+                  {/*</HelperToolTip>*/}
+                  {/*<HelperToolTip label='protocol used to complete the swap'>*/}
+                  {/*  <Row.Label>time min:{value.timeStat.min}</Row.Label>*/}
+                  {/*</HelperToolTip>*/}
+                  {/*<HelperToolTip label='protocol used to complete the swap'>*/}
+                  {/*  <Row.Label>time min:{value.timeStat.max}</Row.Label>*/}
+                  {/*</HelperToolTip>*/}
+                </>
+              })}
             </Row>
 
             <Row>

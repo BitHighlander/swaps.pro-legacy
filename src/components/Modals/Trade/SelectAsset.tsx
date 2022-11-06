@@ -25,10 +25,11 @@ import { AssetIcon } from 'components/AssetIcon'
 import { useForm } from 'react-hook-form'
 import { useWallet, WalletActions } from 'context/WalletProvider/WalletProvider'
 import { SwapCurrency } from 'lib/assets/getTokenList'
+import { Balance } from 'context/WalletProvider/types'
 
-export type SelectAssetModalProps = { liveOnly?: boolean, walletSend?: boolean }
+export type SelectAssetModalProps = { liveOnly?: boolean, selectType: 'input' | 'output', extra?: any }
 
-export const SelectAssetModal = ({ liveOnly = true, walletSend = false }: SelectAssetModalProps) => {
+export const SelectAssetModal = ({ liveOnly = true, selectType, extra }: SelectAssetModalProps) => {
     const initRef = useRef<HTMLInputElement | null>(null)
     const finalRef = useRef<HTMLDivElement | null>(null)
 
@@ -42,7 +43,7 @@ export const SelectAssetModal = ({ liveOnly = true, walletSend = false }: Select
 
 
     const { state, dispatch } = useWallet()
-    const { balances, exchangeContext, exchangeInfo, status, selectType, assetContext } = state
+    const { balances, exchangeContext, exchangeInfo, status, assetContext } = state
     const [sortedAssets, setSortedAssets] = useState<SwapCurrency[]>([])
     const [filteredAssets, setFilteredAssets] = useState<SwapCurrency[]>([])
     const [liveChains, setLiveChains] = useState<Array<string>>()
@@ -60,17 +61,28 @@ export const SelectAssetModal = ({ liveOnly = true, walletSend = false }: Select
     const searchString = watch('search')
     const searching = useMemo(() => searchString.length > 0, [searchString])
 
-    const onSelectAsset = function (asset: string) {
+    const onSelectAsset = function (asset: Balance) {
         console.log("onSelectAsset: ", asset)
         close()
-        if (walletSend) return dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload: asset })
+        dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload: asset })
         if (selectType === 'input') {
-            dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload: asset })
-            dispatch({ type: WalletActions.SET_TRADE_INPUT, payload: asset })
-            // update()
+            dispatch({
+                type: WalletActions.SET_TRADE_STATE, payload:
+                    state.tradeState ? {
+                        ...state.tradeState,
+                        input: { ...state.tradeState.input, bal: asset, amount: 0 }
+                    } : { input: { bal: asset } }
+            })
+            if (extra) extra()
         } else {
-            dispatch({ type: WalletActions.SET_TRADE_OUTPUT, payload: asset })
-            // update()
+            dispatch({
+                type: WalletActions.SET_TRADE_STATE, payload:
+                    state.tradeState ? {
+                        ...state.tradeState,
+                        output: { ...state.tradeState.output, bal: asset, amount: 0 }
+                    } : { output: { bal: asset } }
+            })
+            if (extra) extra()
         }
         dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: false })
     }
@@ -92,8 +104,8 @@ export const SelectAssetModal = ({ liveOnly = true, walletSend = false }: Select
 
     useEffect(() => {
         if (!state.pioneer || !liveOnly) return
-        console.log("state.pioneer.pioneer: ",state.pioneer.pioneer)
-        console.log("state.pioneer: ",state.pioneer)
+        console.log("state.pioneer.pioneer: ", state.pioneer.pioneer)
+        console.log("state.pioneer: ", state.pioneer)
         state.pioneer.pioneer.instance.Blockchains().then((chains: any) => {
             setLiveChains(Object.values(chains.data.live))
         })
@@ -113,7 +125,7 @@ export const SelectAssetModal = ({ liveOnly = true, walletSend = false }: Select
             <ModalOverlay />
             <ModalContent justifyContent='center' px={3} pt={3} pb={6} height='75%' overflow='scroll'>
                 <ModalHeader textAlign='center'>
-                    <h2>Select an  {selectType} currency</h2>
+                    <h2>Select an {selectType} currency</h2>
                 </ModalHeader>
                 <ModalCloseButton />
                 <ModalBody alignItems='center' justifyContent='center'>
@@ -130,7 +142,7 @@ export const SelectAssetModal = ({ liveOnly = true, walletSend = false }: Select
                                             {balances?.filter((bal: any) => bal.blockchain === chain).map((bal: any) => (
                                                 <GridItem w='100%'>
                                                     <Center>
-                                                        <button onClick={() => onSelectAsset(bal.symbol)} >
+                                                        <button onClick={() => onSelectAsset(bal)} >
                                                             <AssetIcon src={bal?.image} boxSize='40px' />
                                                             <Text>{bal.symbol}</Text>
                                                             <Text>balance: {bal.balance}</Text>

@@ -29,7 +29,7 @@ export const ReceiveAssetModal = ({ balance }: ReceiveAssetModalProps) => {
         if (!copied) return
         setTimeout(() => {
             setCopied(false)
-        }, 2000)
+        }, 1000)
     }, [copied])
 
     const {

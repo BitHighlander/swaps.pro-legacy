@@ -37,7 +37,8 @@ import * as core from "@shapeshiftoss/hdwallet-core";
 import { PinMatrixRequestType } from './KeepKey/KeepKeyTypes'
 import { useKeepKeyEventHandler } from './KeepKey/hooks/useKeepKeyEventHandler'
 import { useModal } from 'hooks/useModal/useModal'
-import { Balance } from './types'
+import { Balance, Invocation } from './types'
+
 
 let {
   baseAmountToNative,
@@ -110,8 +111,7 @@ export enum WalletActions {
   SET_INVOCATION = 'SET_INVOCATION',
   SET_INVOCATION_ID = 'SET_INVOCATION_ID',
   SET_INVOCATION_CONTEXT = 'SET_INVOCATION_CONTEXT',
-  SET_TRADE_INPUT = 'SET_TRADE_INPUT',
-  SET_TRADE_OUTPUT = 'SET_TRADE_OUTPUT',
+  SET_TRADE_STATE = 'SET_TRADE_STATE',
   SET_TRADE_STATUS = 'SET_TRADE_STATUS',
   SET_TRADE_FULLFILLMENT_TXID = 'SET_TRADE_FULLFILLMENT_TXID',
   SET_INVOCATION_TXID = 'SET_INVOCATION_TXID',
@@ -155,14 +155,24 @@ export interface InitialState {
   walletOutput: { name: string; icon: string; isConnected: boolean } | null
   code: any
   username: any
-  assetContext: any
+  assetContext: Balance | null
   invocationId: string | null
-  invocation: any
+  invocation: Invocation | null
   invocationContext: string | null
   context: any
   exchangeContext: string | null
   totalValueUsd: string | null
-  tradeOutput: any
+  tradeState: {
+    input?: {
+      bal: Balance,
+      amount?: number
+    }
+    output?: {
+      bal: Balance,
+      amount?: number
+    }
+    fiatAmount?: number
+  } | null
   exchangeInfo: any
   selectType: any
   tradeStatus: string | null,
@@ -214,7 +224,7 @@ const initialState: InitialState = {
   context: null,
   invocation: null,
   totalValueUsd: null,
-  tradeOutput: null,
+  tradeState: null,
   tradeStatus: null,
   fullfillmentTxid: null,
   invocationTxid: null,
@@ -251,16 +261,26 @@ export type ActionTypes =
   | { type: WalletActions.SET_KEEPKEY; payload: any | null }
   | { type: WalletActions.SET_PAIRING_CODE; payload: String | null }
   | { type: WalletActions.SET_USERNAME; payload: String | null }
-  | { type: WalletActions.SET_TRADE_INPUT; payload: any }
-  | { type: WalletActions.SET_TRADE_OUTPUT; payload: any }
-  | { type: WalletActions.SET_TRADE_STATUS; payload: string }
+  | {
+    type: WalletActions.SET_TRADE_STATE; payload: {
+      input?: {
+        bal: Balance,
+        amount?: number
+      }
+      output?: {
+        bal: Balance,
+        amount?: number
+      }
+      fiatAmount?: number
+    } | null
+  } | { type: WalletActions.SET_TRADE_STATUS; payload: string }
   | { type: WalletActions.SET_TRADE_FULLFILLMENT_TXID; payload: string }
   | { type: WalletActions.SET_KEEPKEY_STATUS; payload: string }
   | { type: WalletActions.SET_KEEPKEY_STATE; payload: number }
   | { type: WalletActions.SET_KEEPKEY_CONNECTED; payload: boolean }
   | { type: WalletActions.SET_ONBOARD_CONNECTED; payload: boolean }
   | { type: WalletActions.SET_KEPLR_CONNECTED; payload: boolean }
-  | { type: WalletActions.SET_ASSET_CONTEXT; payload: String | null }
+  | { type: WalletActions.SET_ASSET_CONTEXT; payload: Balance | null }
   | { type: WalletActions.SET_WALLET_CONTEXT; context: String | null }
   | { type: WalletActions.SET_WALLET_INFO; payload: { name: string; icon: string } }
   | { type: WalletActions.SET_EXCHANGE_INFO; payload: any }
@@ -358,8 +378,8 @@ const reducer = (state: InitialState, action: ActionTypes) => {
       return { ...state, modal: action.payload }
     case WalletActions.SET_SELECT_MODAL_TYPE:
       return { ...state, selectType: action.payload }
-    case WalletActions.SET_TRADE_OUTPUT:
-      return { ...state, tradeOutput: action.payload }
+    case WalletActions.SET_TRADE_STATE:
+      return { ...state, tradeState: action.payload }
     case WalletActions.SET_TRADE_STATUS:
       return { ...state, tradeStatus: action.payload }
     case WalletActions.SET_KEEPKEY_STATUS:
@@ -921,6 +941,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }): JSX
           dispatch({ type: WalletActions.SET_WALLET_INFO, payload: { name: 'pioneer', icon: 'Pioneer' } })
         } else {
           console.log("app is not paired! can not start. please connect a wallet")
+          dispatch({ type: WalletActions.SET_WALLET_MODAL, payload: true })
         }
 
         //@TODO get wallets
